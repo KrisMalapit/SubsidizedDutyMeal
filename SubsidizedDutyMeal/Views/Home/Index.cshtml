@@ -1,0 +1,211 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@*<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>*@
+@*<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>*@
+
+<style>
+    .slider {
+    text-align:center;
+    width: 90%;
+}
+
+.slick-prev:before, 
+.slick-next:before {
+    color: black;
+}
+
+</style>
+
+
+<div class="row">
+
+    @*<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+          <div class="card card-statistics">
+            <div class="card-body">
+              <div class="clearfix">
+                <div class="float-left">
+                  <i class="mdi mdi-cube text-danger icon-lg"></i>
+                </div>
+                <div class="float-right">
+                  <p class="mb-0 text-right">Unique Visitors</p>
+                  <div class="fluid-container">
+                    <h3 class="font-weight-medium text-right mb-0">65650</h3>
+                  </div>
+                </div>
+              </div>
+              <p class="text-muted mt-3 mb-0">
+                <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> 65% lower growth
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+          <div class="card card-statistics">
+            <div class="card-body">
+              <div class="clearfix">
+                <div class="float-left">
+                  <i class="mdi mdi-receipt text-warning icon-lg"></i>
+                </div>
+                <div class="float-right">
+                  <p class="mb-0 text-right">New Members</p>
+                  <div class="fluid-container">
+                    <h3 class="font-weight-medium text-right mb-0">3455</h3>
+                  </div>
+                </div>
+              </div>
+              <p class="text-muted mt-3 mb-0">
+                <i class="mdi mdi-  mark-outline mr-1" aria-hidden="true"></i> Product-wise sales
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+          <div class="card card-statistics">
+            <div class="card-body">
+              <div class="clearfix">
+                <div class="float-left">
+                  <i class="mdi mdi-poll-box text-success icon-lg"></i>
+                </div>
+                <div class="float-right">
+                  <p class="mb-0 text-right">Catalog Edits</p>
+                  <div class="fluid-container">
+                    <h3 class="font-weight-medium text-right mb-0">5693</h3>
+                  </div>
+                </div>
+              </div>
+              <p class="text-muted mt-3 mb-0">
+                <i class="mdi mdi-calendar mr-1" aria-hidden="true"></i> Weekly Sales
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+          <div class="card card-statistics">
+            <div class="card-body">
+              <div class="clearfix">
+                <div class="float-left">
+                  <i class="mdi mdi-account-location text-info icon-lg"></i>
+                </div>
+                <div class="float-right">
+                  <p class="mb-0 text-right">Contacts</p>
+                  <div class="fluid-container">
+                    <h3 class="font-weight-medium text-right mb-0">246</h3>
+                  </div>
+                </div>
+              </div>
+              <p class="text-muted mt-3 mb-0">
+                <i class="mdi mdi-reload mr-1" aria-hidden="true"></i> Product-wise sales
+              </p>
+            </div>
+          </div>
+        </div>*@
+
+</div>
+
+
+
+
+  <script type="text/javascript">
+      //$(document).on('ready', function () {
+
+          
+
+      //});
+      $(function () {
+          var table =  $('#tbl').DataTable();
+
+
+          $(".regular").slick({
+              centerMode: true,
+              centerPadding: '60px',
+              slidesToShow: 7,
+              autoplay: true,
+              autoplaySpeed: 20000,
+              responsive: [
+                {
+                    breakpoint: 768,
+                    settings: {
+                        arrows: false,
+                        centerMode: true,
+                        centerPadding: '40px',
+                        slidesToShow: 7
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        arrows: false,
+                        centerMode: true,
+                        centerPadding: '40px',
+                        slidesToShow: 1
+                    }
+                }
+              ]
+          });
+
+
+          $('.slider-for').slick({
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: false,
+              fade: true,
+              asNavFor: '.slider-nav'
+          });
+          $('.slider-nav').slick({
+              slidesToShow: 3,
+              slidesToScroll: 1,
+              asNavFor: '.slider-for',
+              dots: true,
+              centerMode: true,
+              focusOnSelect: true
+          });
+
+
+      });
+
+   
+      
+
+
+      $('#tbl').dataTable({
+          "processing": true,
+          "serverSide": true,
+          "info": true,
+          "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+          "ajax": {
+              "url": "@Url.Action("getData", "Book", new { noCols = 3 })",
+              "type": "GET"
+          },
+          "columns": [
+              {
+                  "data": "Image"
+                , "orderable": false
+                , "render": function (value) {
+                    var $newLinkTarget = '<img src="/Images/Books/' + value + '" />';
+                    return $newLinkTarget;
+                }, "visible": true
+              },
+            { "data": "Title", "orderable": true },
+            { "data": "Author", "orderable": true },
+            { "data": "Edition", "orderable": true },
+            { "data": "Subject", "orderable": true },
+        
+            {
+                "data": "id"
+                ,"width": "10px"
+                , "orderable": false
+                , "render": function (value) {
+                    var $newLinkTarget = '<a title="Add To Cart" href="javascript:deleteItemdetail(' + value + ')"><i class="menu-icon mdi mdi-cart"></i></a>';
+                    var $newLinkTarget2 = '<a title="View More Details" href="javascript:deleteItemdetail(' + value + ')"><i class="menu-icon mdi mdi-view-list"></i></a>';
+                    return $newLinkTarget +  '  ' +$newLinkTarget2;
+                }, "visible": true
+            }
+
+        ],
+        "order": [[0, "asc"]]
+    });
+</script>
+
+            

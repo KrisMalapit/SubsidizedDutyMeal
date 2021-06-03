@@ -1,0 +1,239 @@
+﻿@model SubsidizedDutyMeal.Models.Employee
+
+@{
+    ViewBag.Title = "Create";
+}
+@{
+
+
+    List<SelectListItem> listBlocked = new List<SelectListItem>();
+    listBlocked.Add(new SelectListItem { Text = "Un-Blocked", Value = "0", });
+    listBlocked.Add(new SelectListItem { Text = "Blocked", Value = "1", });
+
+
+
+
+}
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Update</h4>
+
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ID)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmployeeID)
+
+                @Html.TextBoxFor(m => m.EmployeeID, new { @class = "form-control", @placeholder = "Employee ID" })
+                @Html.ValidationMessageFor(model => model.EmployeeID)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.FirstName)
+
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "First Name" })
+                @Html.ValidationMessageFor(model => model.FirstName)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.LastName)
+
+                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Last Name" })
+                @Html.ValidationMessageFor(model => model.LastName)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Position)
+
+                @Html.TextBoxFor(m => m.Position, new { @class = "form-control", @placeholder = "Position" })
+                @Html.ValidationMessageFor(model => model.Position)
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-form-label">Contract End Date</label>
+                <div>
+                    <input name="ContractEndDate" value="@ViewBag.ContractDate" type="text" class="form-control form-control-md" id="datepicker" placeholder="" style="background-color:white;" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="EmploymentStatus" class="col-form-label">Employment Status</label>
+
+
+                @Html.DropDownList("EmploymentStatus", null, "Select Status", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EmploymentStatus)
+            </div>
+
+            <div class="form-group">
+                <label for="Division" class="col-form-label">Division</label>
+
+
+
+                @Html.DropDownList("DivisionID", null, "Select Division", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DivisionID)
+            </div>
+            <div class="form-group">
+                <label for="Department" class="col-form-label">Department</label>
+
+
+
+                @Html.DropDownList("DepartmentID", null, "Select Department", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DepartmentID)
+            </div>
+            <div class="form-group">
+                <label for="Company" class="col-form-label">Company</label>
+
+
+
+                @Html.DropDownList("CompanyID", null, "Select Company", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CompanyID)
+            </div>
+            <div class="form-group">
+                <label for="Concessionaire" class="col-form-label">Concessionaire</label>
+                @Html.DropDownList("ConcessionaireID", null, "Select Concessionaire", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ConcessionaireID)
+            </div>
+            <div class="form-group">
+                <label for="Blocked" class="col-form-label">Blocked</label>
+                @Html.DropDownList("Blocked", listBlocked, new { @class = "form-control form-control-md" })
+
+            </div>
+
+        }
+        <button id="btnSubmit" class="btn btn-success mr-2">Submit</button>
+        <button class="btn btn-light" onclick="window.location.href = '@Url.Action("Index")'">Cancel</button>
+
+    </div>
+</div>
+<script>
+    $('#btnSubmit').click(function () {
+        document.getElementById('frm').submit();
+    });
+    $(function () {
+        $("#Blocked").select2({
+
+            theme: "bootstrap"
+            , width: '100%'
+        });
+       // $("#EmploymentStatus").select2({ theme: 'bootstrap', width: '100%' });
+        //$("#DepartmentID").select2({ theme: 'bootstrap', width: '100%' });
+        //$("#DivisionID").select2({ theme: 'bootstrap', width: '100%' });
+        //$("#CompanyID").select2({ theme: 'bootstrap', width: '100%' });
+        $("#datepicker").datepicker();
+        $("#EmploymentStatus").select2({
+            theme: "bootstrap"
+          , width: '100%'
+          , ajax: {
+                url: "@Url.Action("SelectEmploymentStatus", "Employee")",
+                dataType: 'json',
+                delay: 300,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, page) {
+                    return {
+                        results: data.items
+                    };
+                },
+                cache: false
+            },
+           // minimumInputLength: 1
+        });
+
+        $("#DivisionID").select2({
+            theme: "bootstrap"
+         , width: '100%'
+         , ajax: {
+                url: "@Url.Action("SelectDivision", "Division")",
+                dataType: 'json',
+                delay: 300,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, page) {
+                    return {
+                        results: data.items
+                    };
+                },
+                cache: false
+            },
+            minimumInputLength: 1
+        });
+        $("#DepartmentID").select2({
+            theme: "bootstrap"
+            , width: '100%'
+            , ajax: {
+                url: "@Url.Action("SelectDepartment","Department")",
+                dataType: 'json',
+                delay: 300,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, page) {
+                    return {
+                        results: data.items
+                    };
+                },
+                cache: false
+            },
+            minimumInputLength: 1
+        });
+
+        $("#CompanyID").select2({
+            theme: "bootstrap"
+            , width: '100%'
+            , ajax: {
+                url: "@Url.Action("SelectCompany", "Company")",
+                dataType: 'json',
+                delay: 300,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, page) {
+                    return {
+                        results: data.items
+                    };
+                },
+                cache: false
+            },
+            minimumInputLength: 1
+        });
+        $("#ConcessionaireID").select2({
+            theme: "bootstrap"
+            , width: '100%'
+            , ajax: {
+                url: "@Url.Action("SelectConcessionaire", "Concessionaire")",
+                dataType: 'json',
+                delay: 300,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, page) {
+                    return {
+                        results: data.items
+                    };
+                },
+                cache: false
+            },
+            minimumInputLength: 1
+        });
+
+    })
+</script>
+
+

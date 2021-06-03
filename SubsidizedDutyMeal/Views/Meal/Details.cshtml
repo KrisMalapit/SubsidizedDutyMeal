@@ -1,0 +1,533 @@
+﻿@{
+    ViewBag.Title = "Details";
+}
+
+<style>
+    #maintable th {
+        color: white;
+    }
+
+    .modal-content {
+        background-color: white;
+    }
+
+    * {
+        font-size: 12px;
+    }
+</style>
+
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"> Meal info</h4>
+
+
+        <div class="modal fade" id="modalCopy" lass="modal hide" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Copy Meal</h5>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-success" id="alertbox2" style="display: none; font-size:14px;">
+                            <strong>Success!</strong> Data copied
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">For this day</label>
+                            <input name="Date" value="" readonly type="text" class="form-control form-control-md" id="datepicker2" placeholder="" style="background-color:white;" />
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="btnProceed">Proceed</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+            <div class="modal fade" id="myModal" lass="modal hide" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Meal Info - Edit</h5>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-success" id="alertbox" style="display: none; font-size:14px;">
+                                <strong>Success!</strong> Data posted.
+                            </div>
+
+                            <input type="text" value="" id="detailID" hidden />
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Name:</label>
+                                <input type="text" class="form-control" name="Name" id="modName">
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Meal Type:</label>
+                                <select class="form-control" name="MealType" id="modMealType">
+                                    <option>Lunch</option>
+                                    <option>Dinner</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="message-text" class="col-form-label">Descriptions:</label>
+                                <textarea class="form-control" name="Descriptions" id="modDescriptions"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">No Of Servings:</label>
+                                <input type="text" class="form-control" name="NoServings" id="modNoServings">
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="window.location.reload()">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            <input id="headerID" type="text" value="@ViewBag.Header" hidden />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Date</label>
+                        <div class="col-sm-9">
+                            <input name="Date" value="@ViewBag.Date" readonly type="text" class="form-control form-control-md" id="datepicker" placeholder="" style="background-color:white;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Meal Name</label>
+                        <div class="col-sm-9">
+                            <input name="Name" id="Name" type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Meal Type</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="MealType" id="MealType">
+
+                                <option>Lunch</option>
+                                <option>Dinner</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea id="Descriptions" name="Descriptions" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">No of Servings</label>
+                        <div class="col-sm-9">
+                            <input name="NoServings" type="text" class="form-control" id="NoServings">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <button id="btnSubmit" class="btn btn-success mr-2">Submit <i class="mdi mdi-content-save"></i></button>
+                <button id="btnCopy" class="btn btn-success mr-2">Create Copy <i class="mdi mdi-file-document"></i></button>
+                <button class="btn btn-light" onclick="window.location.href = '@Url.Action("Index", "Meal")'">Cancel</button>
+            </div>
+            <br />
+
+            <div class="row ">
+                <div class="col-md-12">
+
+                    <table id="tbl" class="table table-striped table-bordered dataTable" style="width: 100%">
+                        <thead>
+                            <tr>
+
+                                <th>Name</th>
+                                <th>Meal Type</th>
+                                <th>Description</th>
+                                <th>No. of Servings</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr>
+
+                                <th>Name</th>
+                                <th>Meal Type</th>
+                                <th>Description</th>
+                                <th>No. of Servings</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tfoot>
+                            <tr>
+
+
+                                <th>Name</th>
+                                <th>Meal Type</th>
+                                <th>Description</th>
+                                <th>No. of Servings</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <script>
+    $(function () {
+        if ($('#headerID').val() == 0) {
+            $("#datepicker").datepicker("setDate", new Date());
+            $("#datepicker2").datepicker("setDate", new Date());
+        } else {
+            $("#datepicker").datepicker();
+            $("#datepicker2").datepicker();
+        }
+        reloadtable();
+    });
+
+
+    $("#MealType").select2({ theme: 'bootstrap', width: '100%' });
+    $("#modMealType").select2({ theme: 'bootstrap', width : '100%' });
+
+    $('#btnUpdate').click(function () {
+
+
+         $.ajax({
+            url: "@Url.Action("UpdateDetails")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {id: $('#detailID').val(), Name: $('#modName').val(), MealType: $('#modMealType').val()
+                    , Descriptions: $('#modDescriptions').val(), NoServings: $('#modNoServings').val()}
+                , success: function (responsedata) {
+                    if (responsedata.status == "success") {
+                        $("#alertbox")[0].style.display = "block";
+                        } else {
+                        swal("Error updating!", "Please try again", "error");
+                        }
+                    }
+        });
+    })
+
+    $('#btnCopy').click(function () {
+        if ($('#headerID').val()==0) {
+            swal("Error!", "No record to be copied", "error");
+            return false;
+        }
+
+
+        $('#modalCopy').modal('show');
+
+
+
+    })
+
+   $('#btnProceed').click(function () {
+
+
+
+
+       swal({
+            title: "Copy meal proceed?",
+            text: "This will make a copy of current date to your new date set",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+       }).then((willproceed) => {
+           if (willproceed) {
+               if ($('#datepicker2').val() == "") {
+                   swal("Error!", "No date set", "error");
+                   return;
+               }
+
+                         $.ajax({
+                        url: "@Url.Action("CopyMeal")"
+                            , method: "POST"
+                            , dataType: 'json'
+                         , data: { id: $('#headerID').val(), Date: $('#datepicker2').val() }
+                            , success: function (responsedata) {
+                                if (responsedata.status == "success") {
+                                    $("#alertbox2")[0].style.display = "block";
+                                    } else {
+                                    swal("Error copying!" + responsedata.message, "Please try again", "error");
+                                    }
+                                }
+                            });
+
+
+
+
+                        } else {
+                           swal("Transaction cancelled!");
+                        }
+            });
+
+    })
+
+
+
+    function modalHere(v) {
+
+            var $buttonClicked = $(v);
+            var id = parseInt($buttonClicked.attr('data-id'))||0;
+            $('#detailID').val(id);
+
+
+                    $.ajax({
+                        url: "@Url.Action("ShowDetails")"
+                            , method: "POST"
+                            , dataType: 'json'
+                            , data: { id: id}
+                            , success: function (responsedata) {
+
+                                if (responsedata.status == "success") {
+                                    $("#modName").val(responsedata.param1);
+                                    $("#modMealType").val(responsedata.param2);
+                                    $("#modDescriptions").val(responsedata.param3);
+                                    $("#modNoServings").val(responsedata.num1);
+                                } else {
+                                swal("Error deleting!", "Please try again", "error");
+                                }
+
+                            }
+                    });
+
+            $('#myModal').modal('show');
+        }
+
+
+
+
+
+
+    $('#tbl thead tr:eq(1) th').each(function () {
+        var title = $(this).text();
+
+        if (title == "Action") {
+            $(this).html('');
+        } else {
+            $(this).html('<input type="text" class="form-control form-control-md" placeholder="Search ' + title + '" />');
+        }
+
+    });
+
+    function reloadtable() {
+        $("#tbl").dataTable().fnDestroy();
+
+        var table = $('#tbl').DataTable({
+            "processing": false,
+            "serverSide": true,
+            "info": true,
+            "lengthMenu": [[10, 50, 100, -1], [10, 50, 100, "All"]],
+            "ajax": {
+                "url": "@Url.Action("getDataDetails", "Meal")?noCols=4&headerID=" + $('#headerID').val(),
+                "type": "POST"
+            },
+            "columns": [
+                {
+                    "data": "Name"
+                    , "orderable": true
+                    , "render": function (data, type, row, meta) {
+                        var $newLinkTarget = '<a href="#" onclick="modalHere(this);" class="detailstt" data-id=' + row['ID'] + '>' + data + ' </a>';
+                        return $newLinkTarget;
+                    }
+                    , "width": "25%"
+                },
+
+
+
+                {
+                    "data": "MealType"
+                    , "orderable": true
+                    , "width": "25%"
+                },
+                {
+                    "data": "Descriptions"
+                    , "orderable": true
+                    , "width": "25%"
+                },
+                {
+                    "data": "NoServings"
+                    , "orderable": true
+                    , "width": "20%"
+                },
+                {
+                    "data": "ID"
+                    , "orderable": true
+                    , "render": function (value) {
+
+                        var $newLinkTarget = '<button type="button" class="btn btn-inverse-danger btn-fw" onclick="javascript:deleteItemdetail(' + value + ')">Delete</button>';
+                        return $newLinkTarget;
+                    }, "visible": true
+
+                }
+
+            ],
+            "order": [[0, "asc"]]
+            , "orderCellsTop": true
+        });
+    }
+    $('#datepicker').datepicker().on('changeDate', function (ev) {
+
+
+
+        $.ajax({
+                url: "@Url.Action("GetDateDetails")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {
+
+                     Date: $('#datepicker').val()
+                }
+                , success: function (data) {
+
+                    if (parseInt(data.length)) {
+
+                        $("#headerID").val(data[0].MealHeaderID);
+                    } else {
+                        $("#headerID").val(0);
+                    };
+
+
+                   // $("#headerID").val(data[0].MealHeaderID);
+
+                    reloadtable();
+
+            }
+
+            });
+
+
+
+
+    });
+
+            //$(window).resize(function () {
+            //    table.fnDraw(false)
+            //});
+
+            // Apply the search
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+
+            $('#tbl input').on('keyup change', function (e) {
+                var keyCode = e.keyCode
+                if (keyCode >= 9 && keyCode <= 27) {
+
+                } else {
+                    searchFunction(this);
+                }
+            });
+            function searchFunction(e) {
+                delay(function () {
+
+                    table.column($(e).parent().index() + ':visible')
+                    .search(e.value)
+                    .draw();
+                }, 1000);
+            }
+    $('#btnSubmit').click(function () {
+
+
+        if ($('#Name').val()=="") {
+            swal("Cannot Save!", "Please fill necessary fields.", "info");
+            return false;
+        }
+
+
+        $.post("@Url.Action("CreateMeal", "Meal")", {
+             Date: $('#datepicker').val(), Name: $('#Name').val(), MealType: $('#MealType').val()
+            , Descriptions: $('#Descriptions').val(), NoServings: $('#NoServings').val()
+        }
+                , function (responseData) {
+                    if (responseData.status == "success") {
+
+                        $('#headerID').val(responseData.num1)
+                        reloadtable();
+                    } else {
+                        swal("Error deleting!", "Please try again", "error");
+                    }
+                });
+    })
+    $('#btnCancel').click(function () {
+
+
+    })
+
+
+
+
+        function deleteItemdetail(id) {
+            swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                 $.post("@Url.Action("DeleteDetails", "Meal")", {id:id}
+                       , function (responseData) {
+                           if (responseData.status == "success") {
+                               swal("Done!", "It was succesfully deleted!", {
+                                   icon: "success",
+                                   buttons: false,
+                                   timer: 2000
+                               });
+                               $('#tbl').DataTable().ajax.reload();
+                           } else {
+                               swal("Error deleting!", responseData.message, {
+                                   icon: "warning",
+                                  // buttons: false,
+                             
+                               });
+                           }
+                       });
+            } else {
+               swal("Transaction cancelled!");
+            }
+            });
+
+
+
+
+
+
+    }
+    </script>

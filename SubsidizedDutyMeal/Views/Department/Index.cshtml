@@ -1,0 +1,325 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+
+    #tbl_filter {
+        display: none;
+    }
+</style>
+
+
+<div class="modal fade" id="modalDepartments" lass="modal hide" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Department Details</h5>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success" id="alertbox" style="display: none; font-size:14px;">
+                    <strong>Success!</strong> Data posted.
+                </div>
+                <div class="alert alert-danger" id="alertbox2" style="display: none; font-size:14px;">
+                    <strong>Error!</strong><p id="msg"></p>
+                </div>
+
+                <input type="text" class="form-control" name="detailID" id="detailID" hidden>
+
+                <div class="form-group">
+                    <label class="col-form-label">Code</label>
+                    <input type="text" class="form-control" name="Code" id="Code">
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label">Name</label>
+                    <input type="text" class="form-control" name="Name" id="Name">
+                </div>
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="reload();">Close</button>
+                <button type="button" class="btn btn-primary" id="btnSubmit">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="card">
+
+    <div class="card-body">
+        <h4 class="card-title">Departments Maintenance</h4>
+        <div class="form-group">
+
+
+            <button class="btn btn-success mr-2" data-toggle="modal" data-target="#modalDepartments" id="btnCreate">
+                Create New Record
+                <i class="mdi mdi-plus"></i>
+            </button>
+        </div>
+
+
+        <table id="tbl" class="table table-striped table-bordered dataTable" style="width: 100%">
+            <thead>
+                <tr>
+
+                    <th>Code</th>
+                    <th>Name</th>
+
+                    <th>Action</th>
+                </tr>
+                <tr>
+
+                    <th>Code</th>
+                    <th>Name</th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+    var $ttype = "new";
+    function clear() {
+        $('#detailID').val(0);
+        $('#Code').val("");
+        $('#Name').val("");
+        $("#alertbox")[0].style.display = "none";
+        $("#alertbox2")[0].style.display = "none";
+    }
+
+    $('#btnCreate').click(function () {
+        clear();
+        $ttype = "new";
+        //$('#grpConcessionaire').show();
+    });
+
+
+   
+
+
+    $('#tbl thead tr:eq(1) th').each(function () {
+        var title = $(this).text();
+
+        if (title == "" ) {
+            $(this).html('');
+        } else {
+
+
+                $(this).html('<input type="text" class="form-control form-control-md" placeholder="Search ' + title + '" />');
+
+
+        }
+
+    });
+    $('#btnSubmit').click(function () {
+
+
+         $.ajax({
+             url: "@Url.Action("CreateUpdate")?Ttype=" + $ttype
+                , method: "POST"
+                , dataType: 'json'
+             , data: {
+                    ID : $('#detailID').val(),
+                    Code: $('#Code').val(),
+                    Name: $('#Name').val(),
+                }
+                , success: function (responsedata) {
+                    if (responsedata.status == "success") {
+                        $("#alertbox2")[0].style.display = "none";
+
+                        $("#alertbox")[0].style.display = "block";
+
+                    } else {
+                        document.getElementById('msg').innerHTML = responsedata.message;
+                        $("#alertbox")[0].style.display = "none";
+                        $("#alertbox2")[0].style.display = "block";
+
+                        //swal("Error!" + responsedata.message, "Please try again", "error");
+                    }
+                }
+            });
+    });
+    function reload() {
+        $('#tbl').DataTable().ajax.reload();
+    }
+
+
+    function modalDepartments(v) {
+        clear();
+            var $buttonClicked = $(v);
+            var id = parseInt($buttonClicked.attr('data-id'))||0;
+            $('#detailID').val(id);
+            $ttype = "update";
+
+                    $.ajax({
+                        url: "@Url.Action("ShowDetails")"
+                            , method: "POST"
+                            , dataType: 'json'
+                            , data: { id: id}
+                            , success: function (responsedata) {
+
+                                if (responsedata.status == "success") {
+
+
+
+                                    $("#Code").val(responsedata.param1);
+
+                                    $("#Name").val(responsedata.param2);
+                                } else {
+                                swal("Error!" + responsedata.message, "Please try again", "error");
+                                }
+
+                            }
+                    });
+
+        $('#modalDepartments').modal('show');
+        }
+
+
+
+    var table = $('#tbl').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "info": true,
+        "lengthMenu": [[50, 100, 150, -1], [50, 100, 150, "All"]],
+        "ajax": {
+            "url": "@Url.Action("getData")?noCols=2",
+            "type": "POST"
+        },
+        "dom": "Bfrtip",
+        "columns": [
+
+
+
+            {
+                "data": "Code"
+                , "orderable": true
+                , "render": function (data, type, row, meta) {
+                    var $newLinkTarget = '<a href="#" onclick="modalDepartments(this);" class="detailstt" data-id=' + row['ID'] + '>' + data + ' </a>';
+                    return $newLinkTarget;
+                }
+                , "width": "20%"
+            },
+            {
+                "data": "Name"
+                , "orderable": true
+                , "width": "70%"
+            },
+
+            {
+                "data": "ID"
+                , "orderable": false
+                , "width": "10px"
+                , "render": function (data, type, row, meta) {
+
+                    var $newLinkTarget = '<a href="javascript:deleteItemdetail(' + row['ID'] + ')"><i class="menu-icon mdi mdi-delete"></i></a>';
+
+
+                    return $newLinkTarget;
+                }, "visible": true
+            }
+
+
+
+        ],
+        "order": [[0, "asc"]]
+            , "orderCellsTop": true
+    });
+
+
+
+
+            $(window).resize(function () {
+                table.fnDraw(false)
+            });
+
+            // Apply the search
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+
+            $('#tbl input').on('keyup change', function (e) {
+                var keyCode = e.keyCode
+                if (keyCode >= 9 && keyCode <= 27) {
+
+                } else {
+                    searchFunction(this);
+                }
+            });
+            function searchFunction(e) {
+                delay(function () {
+
+                    table.column($(e).parent().index() + ':visible')
+                    .search(e.value)
+                    .draw();
+                }, 1000);
+    }
+
+    function deleteItemdetail(id) {
+            swal({
+            title: "Are you sure you want to delete item?",
+                text: "Once deleted, you will not be able to recover this file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            }).then((willDelete) => {
+            if (willDelete) {
+                 $.post("@Url.Action("Delete")", {id:id}
+                       , function (responseData) {
+                           if (responseData.status == "success") {
+                               swal("Done!", "It was succesfully deleted!", {
+                                   icon: "success",
+                               });
+                               $('#tbl').DataTable().ajax.reload();
+                           } else {
+                               swal("Error deleting!", "Please try again", "error");
+                           }
+                       });
+            } else {
+               swal("Transaction cancelled!");
+            }
+            });
+
+
+
+
+
+
+    }
+
+
+
+
+</script>
+
+
+
+
+
+
+

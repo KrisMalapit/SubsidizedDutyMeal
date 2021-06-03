@@ -1,0 +1,376 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<script src="~/Content/scripts/moment.js"></script>
+<style>
+    tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+
+    #tbl_filter {
+        display: none;
+    }
+</style>
+
+
+<div class="modal fade" id="modalOR" lass="modal hide" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Date Details</h5>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success" id="alertbox" style="display: none; font-size:14px;">
+                    <strong>Success!</strong> Data posted.
+                </div>
+                <div class="alert alert-danger" id="alertbox2" style="display: none; font-size:14px;">
+                    <strong>Error!</strong> No record found.
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label">Date</label>
+                    <div>
+                        <input name="Date" value="@ViewBag.Date" readonly type="text" class="form-control form-control-md" id="datepicker2" placeholder="" style="background-color:white;" />
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="employee-id" class="col-form-label">Employee ID</label>
+                    <input type="text" class="form-control" name="EmpID" id="EmpID">
+                </div>
+                <div class="form-group">
+                    <label for="employee-name" class="col-form-label">Employee Name</label>
+                    <input type="text" class="form-control" name="EmpName" id="EmpName" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="employee-name" class="col-form-label">Details</label>
+                    <textarea type="text" class="form-control" name="Details" id="Details" rows="3"></textarea>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="reload();">Close</button>
+                <button type="button" class="btn btn-primary" id="btnSubmit">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="card">
+
+    <div class="card-body">
+        <h4 class="card-title">Meal Over Ride Schedule</h4>
+        <div class="form-group">
+           
+
+            <button class="btn btn-success mr-2" data-toggle="modal" data-target="#modalOR">
+                Create Over Ride
+                <i class="mdi mdi-plus"></i>
+            </button>
+        </div>
+        @*<div class="form-group">
+            <label class="col-form-label">Date</label>
+            <div>
+                <input name="Date" value="@ViewBag.Date" readonly type="text" class="form-control form-control-md" id="datepicker" placeholder="" style="background-color:white;" />
+            </div>
+        </div>*@
+
+        <table id="tbl" class="table table-striped table-bordered dataTable" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Employee ID</th>
+                    <th>Employee Name</th>
+                    <th>Details</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <th>Date</th>
+                    <th>Employee ID</th>
+                    <th>Employee Name</th>
+                    <th>Details</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Date</th>
+                    <th>Employee ID</th>
+                    <th>Employee Name</th>
+                    <th>Details</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(function () {
+
+        $("#datepicker").datepicker();
+        $("#datepicker2").datepicker("setDate", new Date());
+    });
+
+
+
+
+
+    $('#tbl thead tr:eq(1) th').each(function () {
+        var title = $(this).text();
+
+        if (title == "" ) {
+            $(this).html('');
+        } else {
+
+            if (title === "Date") {
+                $(this).html('<input type="text" class="form-control form-control-md" id="datepicker" placeholder="Search ' + title + '" />');
+            } else {
+                $(this).html('<input type="text" class="form-control form-control-md" placeholder="Search ' + title + '" />');
+            }
+
+        }
+
+    });
+
+    function reload() {
+        $('#tbl').DataTable().ajax.reload();
+    }
+
+    $('#btnSubmit').click(function () {
+         $.ajax({
+                url: "@Url.Action("CreateOverRide")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {
+                    EmployeeID: $('#EmpID').val(),
+                    Details: $('#Details').val(),
+                    OrderDate: $('#datepicker2').val(),
+                }
+                , success: function (responsedata) {
+                    if (responsedata.status == "success") {
+                         
+                        $("#alertbox")[0].style.display = "block";
+                          
+                    } else {
+                        swal("Error!" + responsedata.message, "Please try again", "error");
+                    }
+                }
+            });
+    });
+
+
+
+    $('#EmpID').on('keyup', function (event) {
+        $('#EmpName').val("");
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            
+
+            $.ajax({
+                url: "@Url.Action("GetEmployeeDetails", "Order")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {
+                    EmpID: $('#EmpID').val()
+
+                }
+                , success: function (responsedata) {
+                    if (responsedata.status == "success") {
+                         
+                        $('#EmpName').val(responsedata.message);
+                          
+                    } else {
+                        swal("Employee ID does not exist!", "Please try again", "error");
+                    }
+                }
+            });
+            
+        }
+
+    });
+
+
+
+    var table = $('#tbl').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "info": true,
+        "lengthMenu": [[50, 100, 150, -1], [50, 100, 150, "All"]],
+        "ajax": {
+            "url": "@Url.Action("getData", "MealOverRide")?noCols=4",
+            "type": "POST"
+            //,"data": function (d) {
+            //    d.noCols = 4,
+            //    d.dt = $('#datepicker').val();
+            //}
+        },
+        "dom": "Bfrtip",
+
+
+
+
+
+        "columns": [
+            {
+                "data": "Date", "orderable": true
+                , "render": function (data, type, row, meta,value) {
+                    if (value === null) return "";
+                    var $newLinkTarget = moment(data).format('ll');
+                    return $newLinkTarget;
+                }
+
+            },
+            {
+                "data": "EmployeeID", "orderable": true
+
+            },
+
+            {
+                "data": "EmployeeName"
+                , "orderable": true
+
+            },
+            {
+                "data": "Details"
+                , "orderable": true
+
+            },
+           
+
+            {
+                "data": "ID"
+                , "orderable": false
+                , "width": "10px"
+                , "render": function (data, type, row, meta) {
+
+                    var $newLinkTarget = '<a href="javascript:deleteItemdetail(' + row['ID'] + ')"><i class="menu-icon mdi mdi-delete"></i></a>';
+                    //var $newLinkTarget = '<button type="button" class="btn btn-inverse-danger btn-fw" data-id=' + row['ID'] + ' onclick="modalHere(this);">Void Order</button>';
+
+                    return $newLinkTarget;
+                }, "visible": true
+            }
+
+
+
+        ],
+        "order": [[0, "asc"]]
+            , "orderCellsTop": true
+    });
+
+
+
+
+            $(window).resize(function () {
+                table.fnDraw(false)
+            });
+
+            // Apply the search
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+
+            $('#tbl input').on('keyup change', function (e) {
+                var keyCode = e.keyCode
+                if (keyCode >= 9 && keyCode <= 27) {
+
+                } else {
+                    searchFunction(this);
+                }
+            });
+            function searchFunction(e) {
+                delay(function () {
+
+                    table.column($(e).parent().index() + ':visible')
+                    .search(e.value)
+                    .draw();
+                }, 1000);
+    }
+        //function modalOR(v) {
+
+        //    $('#myModalOR').modal('show');
+        //}
+    function deleteItemdetail(id) {
+            swal({
+            title: "Are you sure you want to delete item?",
+                text: "Once deleted, you will not be able to recover this file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                 $.post("@Url.Action("Delete")", {id:id}
+                       , function (responseData) {
+                           if (responseData.status == "success") {
+                               swal("Done!", "It was succesfully voided!", {
+                                   icon: "success",
+                               });
+                               $('#tbl').DataTable().ajax.reload();
+                           } else {
+                               swal("Error deleting!", "Please try again", "error");
+                           }
+                       });
+            } else {
+               swal("Transaction cancelled!");
+            }
+            });
+
+
+
+
+
+
+    }
+
+
+    $('#datepicker').datepicker().on('changeDate', function (ev) {
+        table.ajax.reload();
+    })
+    @*$('#btnSubmit').click(function () {
+        var str = $('#Details').val();
+        if (str.trim() == "") {
+            $('#Details').focus();
+            swal("Error voiding!", "Please fill out Details", "error");
+            return false;
+        }
+
+
+        $.ajax({
+            url: "@Url.Action("VoidMeal")"
+                , method: "POST"
+                , dataType: 'json'
+            , data: {
+                OrderHeaderID: $('#detailID').val()
+                , Reason: $('#Reason').val()
+            }
+                , success: function (responsedata) {
+
+                    if (responsedata.status == "success") {
+                        $("#alertbox")[0].style.display = "block";
+                        table.ajax.reload();
+                    } else {
+                        swal("Error deleting!", responsedata.message, "error");
+                    }
+
+                }
+        });
+
+
+    })*@
+
+</script>
+
+
+
+

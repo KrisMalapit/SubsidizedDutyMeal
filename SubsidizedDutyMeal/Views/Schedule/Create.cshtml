@@ -1,0 +1,136 @@
+﻿@model System.Data.DataTable
+@using System.Data;
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    #maintable th {
+        color: white;
+    }
+
+</style>
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Create</h4>
+
+
+        @using (Html.BeginForm("Upload", "Schedule", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary()
+
+
+            <div class="row">
+
+
+                <div class="form-group row col-6">
+                    <label for="UploadFile" class="col-sm-3 col-form-label">Upload File</label>
+
+                    <div class="col-9 row">
+
+                        <input type="file" class="form-control col-sm-8" id="dataFile" name="upload">
+                        <input type="submit" value="Upload" class="btn btn-warning form-control col-2" />
+                        <input type="button" value="Post" id="btnPost" class="btn btn-success form-control col-2" />
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="alert alert-success" id="alertbox" style="display: none; font-size:14px;">
+                <strong>Success!</strong> Data posted.
+            </div>
+            <div class="row" id="tableDetails" style="width:100%;">
+                @if (Model != null)
+                {
+                    <table class="table table-responsive" id="maintable" style="table-layout: fixed;width: 100%">
+                        <thead style="background-color: teal">
+                            <tr>
+                                @foreach (DataColumn col in Model.Columns)
+                                {
+                                    <th>@col.ColumnName</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (DataRow row in Model.Rows)
+                            {
+                                <tr>
+                                    @foreach (DataColumn col in Model.Columns)
+                                    {
+                                        <td>@row[col.ColumnName]</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+        }
+
+       
+    </div>
+ </div>
+
+<script>
+    $(window).bind('resize', function () {
+        $("#maintable").css('height', $(window).height() - 275);
+    }).trigger('resize');
+
+    $(function () {
+
+
+    });
+    $('#btnPost').click(function () {
+         $.post("@Url.Action("CheckIfExisting", "Schedule")"
+                , function (responseData) {
+                    if (responseData.status == "success" && responseData.message == "yes") {
+                       swal({
+                           title: "Record existing,this will append or replace existing record in our database. Do you want to proceed?",
+                            text: "Once replaced, you will not be able to recover record",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                            }).then((willContinue) => {
+                                if (willContinue) {
+                                        $.post("@Url.Action("PostSchedule", "Schedule")"
+                                        , function (responseData) {
+                                            if (responseData.status == "success") {
+                                                $("#alertbox")[0].style.display = "block";
+
+                                            } else {
+                                                swal("Error submitting!", responseData.message + ". Please try again", "error");
+                                            }
+                                        });
+                            } else {
+                               swal("Transaction cancelled!");
+                            }
+                        });
+
+                    } else {
+                        $.post("@Url.Action("PostSchedule", "Schedule")"
+                                        , function (responseData) {
+                                            if (responseData.status == "success") {
+                                                $("#alertbox")[0].style.display = "block";
+
+                                            } else {
+                                                swal("Error submitting!", responseData.message + ". Please try again", "error");
+                                            }
+                                        });
+                    }
+            });
+
+    });
+
+
+
+ 
+
+</script>
+
+
+
+
+

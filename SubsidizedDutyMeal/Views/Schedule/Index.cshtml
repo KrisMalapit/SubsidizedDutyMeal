@@ -1,0 +1,208 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Schedule Masterlist</h4>
+
+        <button class="btn btn-success mr-2" onclick="window.location.href = '@Url.Action("Create", "Schedule")'" id="btnCreate">
+            Create Schedule
+            <i class="mdi mdi-plus"></i>
+        </button>
+        <br />
+        <br />
+
+
+
+        <div class="row">
+            <div class="table-responsive">
+                <table id="tbl" class="table table-striped table-bordered dataTable" style="width: 100%">
+                    <thead>
+                        <tr>
+
+                            <th>ReferenceNo</th>
+                            <th>Month</th>
+                            <th>Year</th>
+                            <th>Created By</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tfoot>
+                        <tr>
+
+                            <th>ReferenceNo</th>
+                            <th>Month</th>
+                            <th>Year</th>
+                            <th>Created By</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        //$("#datepicker").datepicker();
+        $('#tbl').DataTable();
+
+    });
+    $("#Domain").select2({
+        width: '100%',
+        theme: 'bootstrap'
+    })
+
+    $('#tbl thead tr:eq(1) th').each(function () {
+        var title = $(this).text();
+
+        if (title == "Action") {
+            $(this).html('');
+        } else {
+            $(this).html('<input type="text" class="form-control form-control-md" placeholder="Search ' + title + '" />');
+        }
+
+    });
+
+    var table = $('#tbl').DataTable({
+        "processing": false,
+        "serverSide": true,
+        "info": true,
+        "lengthMenu": [[10, 50, 100, -1], [10, 50, 100, "All"]],
+        "ajax": {
+            "url": "@Url.Action("getData", "Schedule", new { noCols = 3})",
+            "type": "POST"
+        },
+        "columns": [
+            {
+                "data": "ReferenceNo"
+                    //, "orderable": true
+                    , "render": function (data, type, row, meta) {
+                        var $newLinkTarget = '<a href="@Url.Action("Edit")?id='
+                                +
+                            row['ID']
+                                + '">' + data + ' </a>';
+                        return $newLinkTarget;
+                }
+                , "width": "20%"
+            },
+
+
+
+            {
+                "data": "Month"
+                , "orderable": true
+                ,"width" : "20%"
+            },
+            {
+                "data": "Year"
+                , "orderable": true
+                , "width": "20%"
+            },
+            {
+                "data": "Name"
+                , "orderable": true
+                , "width": "20%"
+            },
+            {
+                "data": "Status"
+                , "orderable": true
+                , "width": "10%"
+            },
+                {
+                    "data": "ID"
+                    , "orderable": true
+                    , "render": function (value) {
+
+                        var $newLinkTarget = '<button type="button" class="btn btn-inverse-danger btn-fw" onclick="javascript:deleteItemdetail(' + value + ')">Delete</button>';
+                        return $newLinkTarget;
+                    }, "visible": true
+                    
+                }
+
+        ],
+        "order": [[0, "asc"]]
+            , "orderCellsTop": true
+    });
+
+            $(window).resize(function () {
+                table.fnDraw(false)
+            });
+
+            // Apply the search
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+
+            $('#tbl input').on('keyup change', function (e) {
+                var keyCode = e.keyCode
+                if (keyCode >= 9 && keyCode <= 27) {
+
+                } else {
+                    searchFunction(this);
+                }
+            });
+            function searchFunction(e) {
+                delay(function () {
+
+                    table.column($(e).parent().index() + ':visible')
+                    .search(e.value)
+                    .draw();
+                }, 1000);
+            }
+
+    function deleteItemdetail(id) {
+            swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            }).then((willDelete) => {
+                    if (willDelete) {
+                         $.post("@Url.Action("DeleteHeader", "Schedule")", {id:id}
+                               , function (responseData) {
+                                   if (responseData.status == "success") {
+                                       swal("Done!", "It was succesfully deleted!", {
+                                           icon: "success",
+                                           buttons: false,
+                                           timer: 2000
+                                       });
+                                       $('#tbl').DataTable().ajax.reload();
+                                   } else {
+                                       swal("Error deleting!", "Please try again", {
+                                           icon: "danger",
+                                           buttons: false,
+                                           timer: 2000
+                                       });
+                                   }
+                               });
+                    } else {
+                       swal("Transaction cancelled!");
+                    }
+            });
+
+
+
+
+
+
+    }
+
+</script>
+
+
+
+
+

@@ -1,0 +1,570 @@
+﻿@model System.Data.DataTable
+@using System.Data;
+
+@{
+    ViewBag.Title = "Edit";
+}
+<style>
+    th {
+        color: white;
+    }
+
+    .unsaved {
+        color: red !important;
+    }
+
+    .saved {
+        color: teal !important;
+    }
+    body {
+        height: 100%;
+        width: 100%;
+    }
+
+    table {
+        border-collapse: collapse;
+        font-size: 13px;
+        table-layout: fixed
+    }
+
+    .outer-container {
+        position: absolute;
+        top: 180px;
+        left: 10px;
+        right: 10px;
+        bottom: 40px;
+        
+    }
+
+    .inner-container {
+        height: 100%;
+        overflow: hidden;
+     
+    }
+
+    .table-header {
+        position: relative;
+    }
+
+    .table-body {
+        overflow: auto;
+    }
+
+    .header-cell {
+        text-align: left;
+        height: 40px;
+    }
+
+
+    .col{
+        width: 100px;
+        min-width: 100px;
+    }
+    .colname {
+        width: 300px;
+        min-width: 300px;
+    }
+     thead th {
+        border-top: 0;
+        border-bottom-width: 1px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+    }
+    .table th, .table td {
+        padding: 18px 30px;
+        
+    }
+</style>
+@*<div class="card">
+    <div class="card-body">*@
+        <h4 class="card-title">Edit</h4>
+
+        <div class="row form-group">
+            <input type="button" value="Post" id="btnPost" class="btn btn-success form-control col-2" />
+        </div>
+
+        <div class="alert alert-success" id="alertbox" style="display: none; font-size:12px;">
+            <strong>Success!</strong> Data posted.
+        </div>
+
+        <div class="outer-container">
+            <div class="inner-container">
+                <div class="table-header">
+                    <table class="table" id="headertable">
+                        <thead style="background-color: teal">
+                            <tr>
+                                <th style="vertical-align: middle;  text-align:center;" hidden>ID </th>
+                                <th style="vertical-align: middle;  text-align:center;" class="col">Action </th>
+                                <th style="vertical-align: middle;  text-align:center;" class="col">IDNo </th>
+                                <th style="vertical-align: middle;  text-align:center;" class="colname">Name </th>
+                                <th style="vertical-align: middle;  text-align:center;" class="col">Month </th>
+                                <th style="vertical-align: middle;  text-align:center;" class="col">Year </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">1 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">2 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">3 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">4 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">5 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">6 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">7 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">8 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">9 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">10 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">11 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">12 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">13 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">14 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">15 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">16 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">17 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">18 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">19 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">20 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">21 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">22 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">23 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">24 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">25 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">26 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">27 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">28 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">29 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">30 </th>
+                                <th style="vertical-align: middle;  text-align:center;"class="col">31 </th>
+
+                            </tr>
+
+                        </thead>
+                    </table>
+                </div>
+                <div class="table-body">
+                    <table id="bodytable" class="table table-striped">
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (DataRow row in Model.Rows)
+                                {
+                                    var i = 0;
+
+                                    <tr>
+
+                                        @foreach (DataColumn col in Model.Columns)
+                                        {
+                                            if (i == 0)
+                                            {
+                                                <td class="body-cell col" contenteditable="true" hidden>@row[col.ColumnName]</td>
+                                            }
+                                            if (i == 1)
+                                            {
+
+
+                                                <td style="text-align:center; " class="body-cell td_controls col">
+                                                    <div>
+                                                        <i class="mdi mdi-plus addrow" style="color: teal; font-weight: bold; text-shadow: 3px 2px 2px #808080"></i>
+                                                        <i id="p1_del_1" class="mdi mdi-delete delrow" style="color: teal; font-weight: bold; text-shadow: 3px 2px 2px #808080"></i>
+
+                                                    </div>
+                                                </td>
+
+
+                                            }
+
+                                            if (i > 0 && i <= 35)
+                                            {
+                                                var cs = "col";
+                                                if (i==2)
+                                                {
+                                                    cs = "colname";
+                                                }
+                                                <td class="@("body-cell "+ cs)" contenteditable="true" >@row[col.ColumnName]</td>
+
+                                            }
+                                            i++;
+
+                                        }
+
+                                    </tr>
+                                }
+
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            @*<div class="row form-group">
+                    <table class="table table-responsive table-striped" id="maintable" style="table-layout: fixed;width: 100%">
+                        <thead style="background-color: teal">
+                            <tr>
+                                <th style="vertical-align: middle;  text-align:center;" hidden>ID </th>
+                                <th style="vertical-align: middle;  text-align:center;">Action </th>
+                                <th style="vertical-align: middle;  text-align:center;">IDNo </th>
+                                <th style="vertical-align: middle;  text-align:center;">Name </th>
+                                <th style="vertical-align: middle;  text-align:center;">Month </th>
+                                <th style="vertical-align: middle;  text-align:center;">Year </th>
+                                <th style="vertical-align: middle;  text-align:center;">1 </th>
+                                <th style="vertical-align: middle;  text-align:center;">2 </th>
+                                <th style="vertical-align: middle;  text-align:center;">3 </th>
+                                <th style="vertical-align: middle;  text-align:center;">4 </th>
+                                <th style="vertical-align: middle;  text-align:center;">5 </th>
+                                <th style="vertical-align: middle;  text-align:center;">6 </th>
+                                <th style="vertical-align: middle;  text-align:center;">7 </th>
+                                <th style="vertical-align: middle;  text-align:center;">8 </th>
+                                <th style="vertical-align: middle;  text-align:center;">9 </th>
+                                <th style="vertical-align: middle;  text-align:center;">10 </th>
+                                <th style="vertical-align: middle;  text-align:center;">11 </th>
+                                <th style="vertical-align: middle;  text-align:center;">12 </th>
+                                <th style="vertical-align: middle;  text-align:center;">13 </th>
+                                <th style="vertical-align: middle;  text-align:center;">14 </th>
+                                <th style="vertical-align: middle;  text-align:center;">15 </th>
+                                <th style="vertical-align: middle;  text-align:center;">16 </th>
+                                <th style="vertical-align: middle;  text-align:center;">17 </th>
+                                <th style="vertical-align: middle;  text-align:center;">18 </th>
+                                <th style="vertical-align: middle;  text-align:center;">19 </th>
+                                <th style="vertical-align: middle;  text-align:center;">20 </th>
+                                <th style="vertical-align: middle;  text-align:center;">21 </th>
+                                <th style="vertical-align: middle;  text-align:center;">22 </th>
+                                <th style="vertical-align: middle;  text-align:center;">23 </th>
+                                <th style="vertical-align: middle;  text-align:center;">24 </th>
+                                <th style="vertical-align: middle;  text-align:center;">25 </th>
+                                <th style="vertical-align: middle;  text-align:center;">26 </th>
+                                <th style="vertical-align: middle;  text-align:center;">27 </th>
+                                <th style="vertical-align: middle;  text-align:center;">28 </th>
+                                <th style="vertical-align: middle;  text-align:center;">29 </th>
+                                <th style="vertical-align: middle;  text-align:center;">30 </th>
+                                <th style="vertical-align: middle;  text-align:center;">31 </th>
+
+                            </tr>
+
+                        </thead>
+                        <tbody>
+
+                            @if (Model != null)
+                            {
+
+                                foreach (DataRow row in Model.Rows)
+                                {
+                                    var i = 0;
+
+                                    <tr>
+
+                                        @foreach (DataColumn col in Model.Columns)
+                                        {
+                                            if (i == 0)
+                                            {
+                                                <td contenteditable="true" hidden>@row[col.ColumnName]</td>
+                                            }
+                                            if (i == 1)
+                                            {
+
+
+                                                <td style="padding: 0px; " class="td_controls">
+                                                    <div>
+                                                        <i class="mdi mdi-plus addrow" style="color: teal; font-weight: bold; text-shadow: 3px 2px 2px #808080"></i>
+                                                        <i id="p1_del_1" class="mdi mdi-delete delrow" style="color: teal; font-weight: bold; text-shadow: 3px 2px 2px #808080"></i>
+
+                                                    </div>
+                                                </td>
+
+
+                                            }
+
+                                            if (i > 0 && i <= 35)
+                                            {
+                                                <td contenteditable="true">@row[col.ColumnName]</td>
+
+                                            }
+                                            i++;
+
+                                        }
+
+                                    </tr>
+                                }
+
+                            }
+
+                        </tbody>
+                    </table>
+                </div>*@
+
+        </div>
+    @*</div>
+</div>*@
+<script>
+    //$(window).bind('resize', function () {
+    //    $("#maintable").css('height', $(window).height() - 275);
+    //}).trigger('resize');
+
+    //$(function () {
+    //    setTableBody();
+    //    $(window).resize(setTableBody).trigger('resize');
+    //    $(".table-body").scroll(function () {
+    //        $(".table-header").offset({ left: -1 * this.scrollLeft });
+    //    });
+    //});
+
+    //function setTableBody() {
+    //    $(".table-body").height($(".inner-container").height() - $(".table-header").height());
+    //}
+
+
+    $(window).bind('resize', function () {
+       $(".table-body").css('height', $(window).height() - 275);
+    }).trigger('resize');
+
+    $(function () {
+        $(".table-body").scroll(function () {
+            $(".table-header").offset({ left: -1 * this.scrollLeft });
+        });
+    })
+
+
+    $('#btnPost').click(function () {
+
+        var refTab = document.getElementById("maintable")
+        var ID = 0;
+        var EmployeeID = 0;
+        var Year = 0;
+        var Month = 0;
+        var D1 = 0;
+        var D2 = 0;
+        var D3 = 0;
+        var D4 = 0;
+        var D5 = 0;
+        var D6 = 0;
+        var D7 = 0;
+        var D8 = 0;
+        var D9 = 0;
+        var D10 = 0;
+        var D11 = 0;
+        var D12 = 0;
+        var D13 = 0;
+        var D14 = 0;
+        var D15 = 0;
+        var D16 = 0;
+        var D17 = 0;
+        var D18 = 0;
+        var D19 = 0;
+        var D20 = 0;
+        var D21 = 0;
+        var D22 = 0;
+        var D23 = 0;
+        var D24 = 0;
+        var D25 = 0;
+        var D26 = 0;
+        var D27 = 0;
+        var D28 = 0;
+        var D29 = 0;
+        var D30 = 0;
+        var D31 = 0;
+        //var Company = "";
+        //var Department = "";
+        //var Concessionaire = "";
+        var EmployeeName = "";
+
+        for (var i = 1; row = refTab.rows[i]; i++) {
+            row = refTab.rows[i];
+            for (var j = 0; col = row.cells[j]; j++) {
+                if (j == 0) {
+                    ID = col.firstChild.nodeValue;
+                }
+                if (j == 2) {
+                    EmployeeID = col.firstChild.nodeValue;
+                }
+                if (j == 3) {
+                    EmployeeName = col.firstChild.nodeValue;
+                }
+                if (j == 4) {
+                    Month = col.firstChild.nodeValue;
+
+                }
+                if (j == 5) {
+                    Year = col.firstChild.nodeValue;
+                }
+                if (j == 6) {
+                    D1 = col.firstChild.nodeValue;
+                }
+                if (j == 7) {
+                    D2 = col.firstChild.nodeValue;
+                }
+                if (j == 8) {
+                    D3 = col.firstChild.nodeValue;
+                }
+                if (j == 9) {
+                    D4 = col.firstChild.nodeValue;
+                }
+                if (j == 10) {
+                    D5 = col.firstChild.nodeValue;
+                }
+                if (j == 11) {
+                    D6 = col.firstChild.nodeValue;
+                }
+                if (j == 12) {
+                    D7 = col.firstChild.nodeValue;
+                }
+                if (j == 13) {
+                    D8 = col.firstChild.nodeValue;
+                }
+                if (j == 14) {
+                    D9 = col.firstChild.nodeValue;
+                }
+                if (j == 15) {
+                    D10 = col.firstChild.nodeValue;
+                }
+                if (j == 16) {
+                    D11 = col.firstChild.nodeValue;
+                }
+                if (j == 17) {
+                    D12 = col.firstChild.nodeValue;
+                }
+                if (j == 18) {
+                    D13 = col.firstChild.nodeValue;
+                }
+                if (j == 19) {
+                    D14 = col.firstChild.nodeValue;
+                }
+                if (j == 20) {
+                    D15 = col.firstChild.nodeValue;
+                }
+                if (j == 21) {
+                    D16 = col.firstChild.nodeValue;
+                }
+                if (j == 22) {
+                    D17 = col.firstChild.nodeValue;
+                }
+                if (j == 23) {
+                    D18 = col.firstChild.nodeValue;
+                }
+                if (j == 24) {
+                    D19 = col.firstChild.nodeValue;
+                }
+                if (j == 25) {
+                    D20 = col.firstChild.nodeValue;
+                }
+                if (j == 26) {
+                    D21 = col.firstChild.nodeValue;
+                }
+                if (j == 27) {
+                    D22 = col.firstChild.nodeValue;
+                }
+                if (j == 28) {
+                    D23 = col.firstChild.nodeValue;
+                }
+                if (j == 29) {
+                    D24 = col.firstChild.nodeValue;
+                }
+                if (j == 30) {
+                    D25 = col.firstChild.nodeValue;
+                }
+                if (j == 31) {
+                    D26 = col.firstChild.nodeValue;
+                }
+                if (j == 32) {
+                    D27 = col.firstChild.nodeValue;
+                }
+                if (j == 33) {
+                    D28 = col.firstChild.nodeValue;
+                }
+                if (j == 34) {
+                    D29 = col.firstChild.nodeValue;
+                }
+                if (j == 35) {
+                    D30 = col.firstChild.nodeValue;
+                }
+                if (j == 36) {
+                    D31 = col.firstChild.nodeValue;
+                }
+                //if (j == 37) {
+                //    Company = col.firstChild.nodeValue;
+                //}
+                //if (j == 38) {
+                //    Department = col.firstChild.nodeValue;
+                //}
+                //if (j==37) {
+                //    ConcessionaireID = col.firstChild.nodeValue;
+                //}
+
+            }
+            $.post("@Url.Action("UpdateSchedule", "Schedule")", {
+                            ID: ID, EmployeeID: EmployeeID, EmployeeName: EmployeeName, Month: Month, Year: Year, D1: D1, D2: D2, D3: D3, D4: D4, D5: D5, D6: D6, D7: D7, D8: D8, D9: D9, D10: D10
+                            , D11: D11, D12: D12, D13: D13, D14: D14, D15: D15, D16: D16, D17: D17, D18: D18, D19: D19, D20: D20, D21: D21, D22: D22, D23: D23, D24: D24, D25: D25, D26: D26, D27: D27, D28: D28, D29: D29, D30: D30, D31: D31
+                , ScheduleHeaderID: @ViewBag.ScheduleHeaderID
+                         }, function (responseData) {
+                                if (responseData.status == "success") {
+                                    $("#alertbox")[0].style.display = "block";
+
+                                } else {
+                                    swal("Error submitting!", responseData.message + ". Please try again", "error");
+                                }
+                            });
+        }
+
+
+
+
+    });
+    function deleteItemdetail() {
+
+    }
+    $('.addrow').click(function () {
+        var $tr = $(this).closest('tr');
+
+        $tr.find("select").select2("destroy").end();
+
+        var $clone = $tr.clone(true);
+
+        $clone.find("td[contenteditable]").each(function () {
+            $(this).text("");
+
+        });
+
+        $tr.after($clone);
+    })
+    $(document).on('click', ".delrow", function () {
+
+        var itemid = parseInt($(this).closest('tr').children('td:first').text());
+
+
+
+
+        $tr = $(this).closest('tr');
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    if (!isNaN(itemid)) {
+
+                        $.post("@Url.Action("DeleteDetails", "Schedule")", { id: itemid}
+                           , function (responseData) {
+                               if (responseData.status == "success") {
+
+
+                               } else {
+                                   swal("Error submitting!", responseData.message + ". Please try again", "error");
+                               }
+                           });
+
+                    }
+                               $tr.remove();
+
+
+                swal("Done!", "It was succesfully deleted!", {
+                    icon: "success",
+                    buttons: false,
+                    timer: 2000
+                });
+            } else {
+                swal("Cancel!", "Transaction cancelled", {
+                    icon: "info",
+                    buttons: false,
+                    timer: 2000
+                });
+            }
+            });
+    })
+            </script>

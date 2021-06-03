@@ -1,0 +1,657 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<style>
+    /*#maintable th {
+        color: white;
+    }*/
+    .orders * {
+        font-size: 12px;
+    }
+
+</style>
+<link rel="stylesheet" type="text/css" href="~/Content/css/font-awesome.min.css">
+<div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 grid-margin stretch-card">
+        <div class="card card-statistics">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="float-right">
+                        <i class="mdi mdi-store-24-hour text-info icon-lg"></i>
+                    </div>
+                    <div class="float-left">
+                        <p class="mb-0 text-left">Concessionaire Name</p>
+                        <div class="fluid-container">
+                            <h3 class="font-weight-medium text-left mb-0">@User.Identity.Name</h3>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <i class="mdi mdi-reload mr-1" aria-hidden="true"></i> Store
+                </p>
+               
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 grid-margin stretch-card">
+        <div class="card card-statistics">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="float-left">
+                        <i class="mdi mdi-clock text-danger icon-lg"></i>
+                    </div>
+                    <div class="float-right">
+                        <p class="mb-0 text-right">@DateTime.Now.DayOfWeek</p>
+                        <div class="fluid-container">
+                            <h3 class="font-weight-medium text-right mb-0">@DateTime.Now.Day @DateTime.Now.ToString("MMMM") @DateTime.Now.Year</h3>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mt-2 mb-0">
+                    <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> DATE / TIME
+                </p>
+              
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+        <div class="card card-statistics">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="float-left">
+                        <i class="mdi mdi-receipt text-warning icon-lg"></i>
+                    </div>
+                    <div class="float-right">
+                        <p class="mb-0 text-right">Orders</p>
+                        <div class="fluid-container">
+                            <h3 class="font-weight-medium text-right mb-0" id="txtOrders">0</h3>
+                        </div>
+                    </div>
+
+                </div>
+                <p class="text-muted mt-2 mb-0">
+                    <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> Total orders for the day
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+        <div class="card card-statistics">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="float-left">
+                        <i class="mdi mdi-poll-box text-success icon-lg"></i>
+                    </div>
+                    <div class="float-right">
+                        <p class="mb-0 text-right">Dine-in</p>
+                        <div class="fluid-container">
+                            <h3 class="font-weight-medium text-right mb-0" id="txtDineIn">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mt-2 mb-0">
+                    <i class="mdi mdi-bookmark-outline mr-1" aria-hidden="true"></i> Total DineIn for the day
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+        <div class="card card-statistics">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="float-left">
+                        <i class="mdi mdi-border-outside text-info icon-lg"></i>
+                    </div>
+                    <div class="float-right">
+                        <p class="mb-0 text-right">Take-out</p>
+                        <div class="fluid-container">
+                            <h3 class="font-weight-medium text-right mb-0" id="txtTakeOut">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mt-2 mb-0">
+                    <i class="mdi mdi-calendar mr-1" aria-hidden="true"></i> Total TakeOut for the day
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+        <div class="card card-statistics">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="float-left">
+                        <i class="mdi mdi-check text-success icon-lg"></i>
+                    </div>
+                    <div class="float-right">
+                        <p class="mb-0 text-right">Served</p>
+                        <div class="fluid-container">
+                            <h3 class="font-weight-medium text-right mb-0" id="txtServed">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mt-2 mb-0">
+                    <i class="mdi mdi-reload mr-1" aria-hidden="true"></i> Total served for the day
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+        <div class="card card-statistics">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="float-left">
+                        <i class="mdi mdi-delete text-danger icon-lg"></i>
+                    </div>
+                    <div class="float-right">
+                        <p class="mb-0 text-right">Un-served</p>
+                        <div class="fluid-container">
+                            <h3 class="font-weight-medium text-right mb-0" id="txtUnServed">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mt-2 mb-0">
+                    <i class="mdi mdi-bookmark-outline mr-1" aria-hidden="true"></i> Total unserved
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+        <div class="card card-statistics">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="float-left">
+                        <i class="mdi mdi-delete text-warning icon-lg"></i>
+                    </div>
+                    <div class="float-right">
+                        <p class="mb-0 text-right">NON</p>
+                        <div class="fluid-container">
+                            <h3 class="font-weight-medium text-right mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mt-2 mb-0">
+                    <i class="mdi mdi-note mr-1" aria-hidden="true"></i> Non
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="row">
+    <div class="col-md-6 grid-margin stretch-card orders">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Orders</h4>
+
+                <div class="alert alert-success" id="alertbox" style="display: none; font-size:12px;">
+                    <strong>Success!</strong> Data found.
+                </div>
+                <div class="alert alert-danger" id="alertbox-danger" style="display: none; font-size:12px;">
+                    <strong>Sorry!</strong> No record found.
+                </div>
+
+                <div class="form-group">
+                    <label col-form-label">Transaction Date</label>
+                    <input name="Date" value="" readonly type="text" class="form-control form-control-md" id="datepicker" placeholder="" style="background-color:white;" />
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Meal Type</label>
+                    <select class="form-control" style="font-size:12px;" name="MealType" id="MealType">
+                        <option>Breakfast</option>
+                        <option>Lunch</option>
+                        <option>Dinner</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label">Employee ID / Biometrics ID</label>
+                    <input class="form-control" id="EmployeeID" onchange="refreshdata();" placeholder="Enter Employee ID / Biometrics ID" type="text" />
+
+
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label">Employee Name</label>
+                    <input class="form-control" placeholder="Employee Name" id="EmployeeName" readonly style="background-color:white;" type="text" />
+
+
+                </div>
+                <button class="btn btn-success" id="btnSearch"> Search </button>
+
+                <br />
+                <br />
+
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="maintable">
+                        <thead>
+                            <tr>
+                                <th hidden>
+                                    ID
+                                </th>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Meal Type
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th>
+                                    <i class="mdi mdi-format-list-bulleted-type"></i>
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 grid-margin stretch-card orders">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">For Delivery</h4>
+
+
+
+
+                <div class="table-responsive">
+                    <table id="tbl" class="table table-striped table-bordered dataTable" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th>Employee Name</th>
+                                <th>Meal Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                           
+                        </thead>
+
+                        <tfoot>
+                            <tr>
+
+                                <th>Employee Name</th>
+                                <th>Meal Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>*@
+
+<div class="row">
+    <div class="col-md-12 grid-margin orders">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Meal Type</label>
+                    <select class="form-control" style="font-size:12px;" name="MealType" id="MealType">
+                        @*<option>Breakfast</option>*@
+                        <option>Lunch</option>
+                        <option>Dinner</option>
+                    </select>
+                </div>
+
+                <h4 class="card-title">For Delivery</h4>
+                <div class="table-responsive">
+                    <table id="tbl" class="table table-striped table-bordered dataTable" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th>Employee Name</th>
+                                <th>Meal Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tfoot>
+                            <tr>
+
+                                <th>Employee Name</th>
+                                <th>Meal Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#datepicker").prop('disabled', true);
+        $("#datepicker").datepicker("setDate", new Date());
+
+        refreshCarousel($("#MealType").val());
+    });
+
+    $("#MealType").select2({ theme: 'bootstrap', width: '100%' });
+
+    $('#btnSearch').click(function () {
+         
+        refreshdata();
+    })
+
+    
+    var table = $('#tbl').DataTable({
+        "processing": false,
+        "serverSide": true,
+        "info": true,
+        "lengthMenu": [[10, 50, 100, -1], [10, 50, 100, "All"]],
+        "ajax": {
+         
+            "url": "@Url.Action("getData", "Processing")",
+            "type": "POST",
+            "data": function (d) {
+                d.noCols = 3,
+                d.Date = $('#datepicker').val();
+            }
+        },
+        "columns": [
+            {
+                "data": "EmployeeName", "orderable": true
+               
+
+            },
+            {
+            "data": "MealName", "orderable": true
+
+
+            },
+            {
+                "data": "MealType", "orderable": true
+
+
+            },
+            {
+                "data": "Status", "orderable": true
+            },
+                {
+                    "data": "ID"
+                    , "orderable": true
+                    , "render": function (value) {
+
+
+                        var $newLinkTarget = "<button title='Served' style='width: 50%' class='btn btn-success form-control' onclick='servedtitem(" + value + ");'><i class='mdi mdi-content-save'></i></button>" +
+                            "<button  title='Un-Served' style='width: 50%' class='btn btn-warning form-control' onclick = 'unserveditem(" + value + ");' > <i class='mdi mdi-archive'></i></button >";
+
+
+                        return $newLinkTarget;
+                    }, "visible": true
+
+                }
+
+        ],
+        "order": [[0, "asc"]]
+            , "orderCellsTop": true
+    });
+
+
+
+    // Apply the search
+    var delay = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
+    $('#tbl input').on('keyup change', function (e) {
+        var keyCode = e.keyCode
+        if (keyCode >= 9 && keyCode <= 27) {
+
+        } else {
+            searchFunction(this);
+        }
+    });
+    function searchFunction(e) {
+        delay(function () {
+
+            table.column($(e).parent().index() + ':visible')
+            .search(e.value)
+            .draw();
+        }, 1000);
+    }
+
+    function deleteItemdetail(id) {
+        swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this file!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+                $.post("@Url.Action("DeleteHeader", "Order")", {id:id}
+                    , function (responseData) {
+                        if (responseData.status == "success") {
+                            swal("Done!", "It was succesfully deleted!", {
+                                icon: "success",
+                                buttons: false,
+                                timer: 2000
+                            });
+                            $('#tbl').DataTable().ajax.reload();
+                        } else {
+                            swal("Error deleting!", responseData.message, {
+                 
+                                buttons: false,
+                                timer: 4000
+                            });
+                        }
+                    });
+        } else {
+            swal("Transaction cancelled!");
+        }
+        });
+    }
+
+    
+    $('#MealType').on('change', function () {
+        refreshCarousel(this.value);
+
+    });
+
+
+    function refreshCarousel(mealtype) {
+
+        $.ajax({
+                url: "@Url.Action("LoadDataCarousel")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {
+                    mealType: mealtype
+                }
+                , success: function (responseData) {
+                    document.getElementById('txtOrders').innerHTML = responseData.num1;
+                    document.getElementById('txtDineIn').innerHTML = responseData.num2;
+                    document.getElementById('txtTakeOut').innerHTML = responseData.num3;
+                    document.getElementById('txtServed').innerHTML = responseData.num4;
+                    document.getElementById('txtUnServed').innerHTML = responseData.num5;
+                }
+        });
+    }
+
+
+    function refreshdata() {
+        $("#maintable").find("tr:gt(0)").remove();
+        table.ajax.reload();
+
+        $("#EmployeeName").val("");
+
+        $.ajax({
+                url: "@Url.Action("GetMeal")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {
+                    EmployeeID: $('#EmployeeID').val()
+                    , MealType: $('#MealType').val()
+                }
+                , success: function (data) {
+                   
+                    if (data.length > 0) {
+
+                        $("#EmployeeName").val(data[0].EmployeeName);
+                        $("#alertbox-danger")[0].style.display = "none";
+
+                        
+                    } else {
+                        $("#alertbox-danger")[0].style.display = "block";
+                        $("#EmployeeName").val("");
+                    };
+
+
+                  
+                       
+                        $.each(data, function (i, item) {
+                            var rows = "<tr>" +
+                                "<td hidden>" + item.ID + "</td>" +
+                                "<td >" + item.MealName + "</td>" +
+                                "<td >" + item.MealType + "</td>" +
+                                "<td style='color: darkorange;'>" + item.Status + "</td>" +
+                                "<td ><button title='Served' style='width: 50%' class='btn btn-success form-control' onclick='servedtitem("+ item.ID +");'><i class='mdi mdi-content-save'></i></button>" +
+                                "<button  title='Un-Served' style='width: 50%' class='btn btn-warning form-control' onclick = 'unserveditem(" + item.ID +");' > <i class='mdi mdi-archive'></i></button ></td >" +
+                                "</tr>";
+                            $('#maintable').append(rows);
+
+                        });  
+
+
+                  
+                          
+                
+                }
+        });
+
+        
+        
+    }
+    function servedtitem(id) {
+         swal({
+            title: "This will tag item as served. Proceed?",
+            text: "Once served, you will not be able to change status",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                        $.ajax({
+                                    url: "@Url.Action("ServedMeal")"
+                                    , method: "POST"
+                                    , dataType: 'json'
+                                    , data: {
+                                        orderID: id
+                                        ,itemstat: "Served"
+                                    }
+                                 , success: function (responseData) {
+                                     if (responseData.status == "success") {
+                                         refreshdata();
+                                         refreshCarousel($('#MealType').val());
+
+                                     } else {
+                                         swal("Error serving!" + responseData.message, "Please try again", "error");
+                                     }
+                    
+                                    }
+                            });
+                swal("Done!", "It was succesfully served!", {
+                    icon: "success",
+                    buttons: false,
+                    timer: 2000
+                });
+            } else {
+                swal("Cancel!", "Transaction cancelled", {
+                    icon: "info",
+                    buttons: false,
+                    timer: 2000
+                });
+            }
+            });
+
+
+
+
+
+
+
+
+
+    }
+    function unserveditem(id) {
+
+         
+
+
+                swal({
+            title: "This will tag item as Unserved. Proceed?",
+                    text: "Once unserved, you will not be able to change status",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                  
+
+                       $.ajax({
+                                url: "@Url.Action("ServedMeal")"
+                                , method: "POST"
+                                , dataType: 'json'
+                                , data: {
+                                    orderID: id
+                                    , itemstat: "UnServed"
+                                }
+                             , success: function (responseData) {
+                                 if (responseData.status == "success") {
+                                     refreshdata();
+                                     refreshCarousel($('#MealType').val());
+                                 } else {
+                                     swal("Error serving!" + responseData.message, "Please try again", "error");
+                                 }
+                    
+                                }
+                        });
+
+      
+
+
+                swal("Done!", "It was succesfully served!", {
+                    icon: "success",
+                    buttons: false,
+                    timer: 2000
+                });
+            } else {
+                swal("Cancel!", "Transaction cancelled", {
+                    icon: "info",
+                    buttons: false,
+                    timer: 2000
+                });
+            }
+            });
+
+
+
+    }
+
+</script>

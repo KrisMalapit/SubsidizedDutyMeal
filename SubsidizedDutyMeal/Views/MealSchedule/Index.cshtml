@@ -1,0 +1,310 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+
+    #tbl_filter {
+        display: none;
+    }
+</style>
+
+
+<div class="modal fade" id="myModal" lass="modal hide" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Meal Info - Edit</h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success" id="alertbox" style="display: none; font-size:14px;">
+                    <strong>Success!</strong> Data posted.
+                </div>
+
+                <input type="text" value="" id="detailID" hidden />
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Employee Name:</label>
+                    <input type="text" class="form-control" name="EmpName" id="EmpName">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-type" class="col-form-label">Meal Type:</label>
+                    <input type="text" class="form-control" name="MealType" id="MealType">
+                </div>
+                <div class="form-group">
+                    <label for="message-text" class="col-form-label">Meal Name:</label>
+                    <input type="text" class="form-control" name="MealName" id="MealName">
+                </div>
+                <div class="form-group">
+                    <label for="message-text" class="col-form-label">Reason:</label>
+                    <textarea class="form-control" name="Reason" id="Reason"></textarea>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="window.location.reload()">Close</button>
+                <button type="button" class="btn btn-primary" id="btnVoid">Void</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="card">
+
+    <div class="card-body">
+        <h4 class="card-title">Meal Schedule</h4>
+
+        <div class="form-group">
+            <label class="col-form-label">Date</label>
+            <div>
+                <input name="Date" value="@ViewBag.Date" readonly type="text" class="form-control form-control-md" id="datepicker" placeholder="" style="background-color:white;" />
+            </div>
+        </div>
+
+        <table id="tbl" class="table table-striped table-bordered dataTable" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>EmployeeName</th>
+                    <th>Status</th>
+
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>EmployeeName</th>
+                    <th>Status</th>
+
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>EmployeeName</th>
+                    <th>Status</th>
+
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(function () {
+
+        $("#datepicker").datepicker("setDate", new Date());
+    });
+
+
+    
+
+
+    $('#tbl thead tr:eq(1) th').each(function () {
+        var title = $(this).text();
+
+        if (title == "Action" || title == "") {
+            $(this).html('');
+        } else {
+
+            $(this).html('<input type="text" class="form-control form-control-md" placeholder="Search ' + title + '" />');
+        }
+
+    });
+
+    var table = $('#tbl').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "info": true,
+        "lengthMenu": [[50, 100, 150, -1], [50, 100, 150, "All"]],
+        "ajax": {
+            "url": "@Url.Action("getData", "MealSchedule")",
+            "type": "POST",
+            "data": function (d) {
+                d.noCols = 3,
+                    d.dt = $('#datepicker').val();
+            }
+        },
+        "dom": "Bfrtip",
+
+        "columns": [
+                    {
+                "data": "EmployeeID", "orderable": true
+               
+            },
+
+            {
+                "data": "EmployeeName"
+                , "orderable": true
+
+            },
+            {
+                "data": "Status"
+                , "orderable": true
+
+            },
+
+            {
+                "data": "ID"
+                , "orderable": false
+                , "width": "10px"
+                , "render": function (data, type, row, meta) {
+
+                    //var $newLinkTarget = '<a href="javascript:deleteItemdetail(' + value + ')"><i class="menu-icon mdi mdi-delete"></i></a>';
+                    var $newLinkTarget = '<button type="button" class="btn btn-inverse-danger btn-fw" data-id=' + row['ID'] + ' onclick="modalHere(this);">Void Order</button>';
+
+                    return $newLinkTarget;
+                }, "visible": true
+            }
+
+
+
+        ],
+        "order": [[0, "asc"]]
+            , "orderCellsTop": true
+    });
+
+
+
+
+            $(window).resize(function () {
+                table.fnDraw(false)
+            });
+
+            // Apply the search
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+
+            $('#tbl input').on('keyup change', function (e) {
+                var keyCode = e.keyCode
+                if (keyCode >= 9 && keyCode <= 27) {
+
+                } else {
+                    searchFunction(this);
+                }
+            });
+            function searchFunction(e) {
+                delay(function () {
+
+                    table.column($(e).parent().index() + ':visible')
+                    .search(e.value)
+                    .draw();
+                }, 1000);
+    }
+        function modalHere(v) {
+
+            var $buttonClicked = $(v);
+            var id = parseInt($buttonClicked.attr('data-id'))||0;
+            $('#detailID').val(id);
+
+
+                    $.ajax({
+                        url: "@Url.Action("ShowDetails")"
+                            , method: "POST"
+                            , dataType: 'json'
+                            , data: { id: id}
+                            , success: function (responsedata) {
+             
+                                if (responsedata.status == "success") {
+                                    $("#EmpName").val(responsedata.param1);
+                                    $("#MealName").val(responsedata.param2);
+                                    $("#MealType").val(responsedata.param3);
+
+                                } else {
+                                swal("Error deleting!", "Please try again", "error");
+                                }
+
+                            }
+                    });
+
+            $('#myModal').modal('show');
+        }
+    function deleteItemdetail(id) {
+            swal({
+            title: "Are you sure?",
+            text: "Once void, you will not be able to recover this file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                 $.post("@Url.Action("VoidOrder", "MealSchedule")", {id:id}
+                       , function (responseData) {
+                           if (responseData.status == "success") {
+                               swal("Done!", "It was succesfully voided!", {
+                                   icon: "success",
+                               });
+                               table.DataTable().ajax.reload();
+                           } else {
+                               swal("Error deleting!", "Please try again", "error");
+                           }
+                       });
+            } else {
+               swal("Transaction cancelled!");
+            }
+            });
+
+
+
+
+
+
+    }
+
+
+    $('#datepicker').datepicker().on('changeDate', function (ev) {
+        table.ajax.reload();
+    })
+    $('#btnVoid').click(function () {
+        var str = $('#Reason').val();
+        if (str.trim() == "") {
+            $('#Reason').focus();
+            swal("Error voiding!", "Please fill out Reason", "error");
+            return false;
+        }
+
+        
+        $.ajax({
+            url: "@Url.Action("VoidMeal")"
+                , method: "POST"
+                , dataType: 'json'
+            , data: {
+                OrderHeaderID: $('#detailID').val()
+                , Reason: $('#Reason').val()
+            }
+                , success: function (responsedata) {
+             
+                    if (responsedata.status == "success") {
+                        $("#alertbox")[0].style.display = "block";
+                        table.ajax.reload();
+                    } else {
+                        swal("Error voiding!", responsedata.message, "error");
+                    }
+
+                }
+        });
+        
+
+    })
+
+</script>
+
+
+
+

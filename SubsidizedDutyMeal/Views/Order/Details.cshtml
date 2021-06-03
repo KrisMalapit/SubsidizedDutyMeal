@@ -1,0 +1,760 @@
+﻿@model List<SubsidizedDutyMeal.Models.View_Model.OrderViewModel>
+
+@{
+    /**/
+
+    ViewBag.Title = "Details";
+}
+
+<style>
+    #maintable th {
+        color: white;
+    }
+
+    .modal-content {
+        background-color: white;
+    }
+
+
+
+    * {
+        font-size: 12px;
+    }
+</style>
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">*@
+<link rel="stylesheet" type="text/css" href="~/Content/css/font-awesome.min.css">
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"> Order info</h4>
+        <input id="headerID" type="text" value="@ViewBag.Header" hidden />
+        <div class="row" hidden>
+            <div class="col-md-6">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Employee ID</label>
+                    <div class="col-sm-9">
+                        <input name="EmployeeID" id="EmployeeID" value="@ViewBag.EmpID" readonly type="text" class="form-control form-control-md" placeholder="" style="background-color:white;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" hidden>
+            <div class="col-md-6">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Employee Name</label>
+                    <div class="col-sm-9">
+                        <input name="EmpName" value="@ViewBag.EmpName" readonly type="text" class="form-control form-control-md" placeholder="" style="background-color:white;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Date</label>
+                    <div class="col-sm-9">
+                        <input name="Date" value="@ViewBag.Date" readonly type="text" class="form-control form-control-md" id="datepicker" placeholder="" style="background-color:white;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Concessionaire</label>
+                    <div class="col-sm-9">
+
+                        @Html.DropDownList("ConcessionaireID", null, "Select Concessionaire", new { @class = "form-control", disabled= "disabled" })
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Meal Type</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="MealType" id="MealType" disabled>
+                            <option value="N/A">N/A</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Order Type</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="OrderType" id="OrderType">
+                            <option>Dine-In</option>
+                            <option>Take-Out</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<br />
+
+<div class="row">
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">MENU</h4>
+                <p class="card-description">Select Meal from list</p>
+
+                <table id="tbl" class="table table-striped table-bordered dataTable" style="width: 100%;">
+                    <thead style="font-size:12px;">
+                        <tr>
+
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>No. of Servings Left</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tfoot>
+                        <tr>
+
+
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>No. of Servings Left</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Cart</h4>
+                <p class="card-description">Selected Meal</p>
+                <div class="row">
+                    <table class="table table-responsive" id="maintable" style="table-layout: fixed;width: 100%">
+                        <thead style="background-color: teal">
+                            <tr>
+                                <th hidden>ID</th>
+                                <th style="width:30%">Name</th>
+                                <th style="width:20%">Meal Type</th>
+                                <th style="width:20%">Order Type</th>
+                                <th style="width:20%">Status</th>
+                                <th style="width: 10px;" class="satu"><i class="mdi mdi-menu"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Count > 0)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td hidden>@item.ID</td>
+                                        <td><a href="#" onclick="modalShow(@item.ID);" class="detailstt"> @item.MealName</a></td>
+                                        <td>@item.MealType</td>
+                                        <td>@item.OrderType</td>
+                                        <td style="color:darkorange;">@item.Status</td>
+                                        <td><button class="btn" onclick="deletecartitem(this);"><i class="fa fa-trash"></i></button></td>
+                                    </tr>
+                                }
+                            }
+
+
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+                @*<div class="row">
+                        <button id="btnProcessed" style="font-size: 12px;" class="btn btn-success">Processed Items</button>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModalMeal" lass="modal hide" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Meal Info - Edit</h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success" id="alertbox" style="display: none; font-size:14px;">
+                    <strong>Success!</strong> Data posted.
+                </div>
+
+                <input type="text" value="" id="detailID" hidden />
+
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Meal Type</label>
+                    <select class="form-control" name="MealType" id="modMealType">
+                        <option value="N/A">N/A</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Name</label>
+                    <select class="form-control" name="MealName" id="modMealName"></select>
+
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">No. Servings Left </label>
+                    <input type="text" class="form-control" name="NoServings" id="NoServingsLeft" readonly>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="window.location.reload()">Close</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+
+
+    $(function () {
+        getdata();
+
+        if ($('#headerID').val() == 0) {
+            $("#datepicker").datepicker("setDate", new Date());
+        } else {
+            $("#datepicker").datepicker();
+        }
+
+        //reloadtable();
+
+
+    });
+
+
+
+    $("#MealType").select2({ theme: 'bootstrap', width: '100%' });
+    $("#modMealType").select2({ theme: 'bootstrap', width: '100%' });
+    $("#modMealName").select2({ theme: 'bootstrap', width: '100%' });
+    $('#OrderType').select2({ theme: 'bootstrap', width: '100%' })
+    $("#ConcessionaireID").select2({ theme: 'bootstrap', width: '100%' });
+
+    $('#tbl thead tr:eq(1) th').each(function () {
+        var title = $(this).text();
+        if (title == "Action") {
+            $(this).html('');
+        } else {
+            $(this).html('<input type="text" class="form-control form-control-md" placeholder="Search ' + title + '" />');
+        }
+    });
+
+
+
+
+
+
+
+
+
+            // Apply the search
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+
+            $('#tbl input').on('keyup change', function (e) {
+                var keyCode = e.keyCode
+                if (keyCode >= 9 && keyCode <= 27) {
+
+                } else {
+                    searchFunction(this);
+                }
+            });
+            function searchFunction(e) {
+                delay(function () {
+
+                    table.column($(e).parent().index() + ':visible')
+                    .search(e.value)
+                    .draw();
+                }, 1000);
+            }
+    $('#btnSubmit').click(function () {
+        $.post("@Url.Action("CreateMeal", "Meal")", {
+            Date: $('#datepicker').val(), Name: $('#Name').val(), MealType: $('#MealType').val()
+            , Descriptions: $('#Descriptions').val(), NoServings: $('#NoServings').val()
+        }
+                , function (responseData) {
+                    if (responseData.status == "success") {
+                        $('#headerID').val(responseData.num1)
+                        location.reload();
+                    } else {
+                        swal("Error posting!", "Please try again", "error");
+                    }
+                });
+    })
+
+
+    function setMealType() {
+         $.ajax({
+            url: "@Url.Action("GetMealType")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {
+                     EmployeeID: $('#EmployeeID').val()
+                    , Date: $('#datepicker').val()
+                }
+                , success: function (responsedata) {
+                    if (responsedata.status == "success") {
+                        $('#MealType').val(responsedata.message).change();
+                    } else {
+                        swal("Error!" + responsedata.message, "Please try again", "error");
+                    }
+                }
+        });
+
+    }
+
+    function refreshdata() {
+        $("#maintable").find("tr:gt(0)").remove();
+    }
+
+    function getdata() {
+        refreshdata();
+        reloadtable();
+        setMealType();
+
+        $.ajax({
+                url: "@Url.Action("GetDateDetails")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {
+                    EmployeeID: $('#EmployeeID').val()
+                    , Date: $('#datepicker').val()
+                }
+                , success: function (data) {
+                   
+                    if (data.length > 0) {
+
+                        $("#headerID").val(data[0].OrderHeaderID);
+                    } else {
+                        $("#headerID").val(0);
+                    };
+
+
+
+
+                    $.each(data, function (i, item) {
+                        var rows = "<tr>" +
+                            "<td hidden>" + item.ID + "</td>" +
+                            "<td><a href='#' onclick='modalShow(" + item.ID + ");' >" + item.MealName + "</a></td>" +
+                            "<td >" + item.MealType + "</td>" +
+                            "<td >" + item.OrderType + "</td>" +
+                            "<td style='color: darkorange;'>" + item.Status + "</td>" +
+                            "<td><button class='btn' onclick='deletecartitem(this);'><i class='fa fa-trash'></i></button></td>" +
+                            "</tr>";
+                        $('#maintable').append(rows);
+
+                    });
+
+
+                }
+            });
+    }
+
+
+    $('#datepicker').datepicker().on('changeDate', function (ev) {
+
+        getdata();
+
+    });
+    $('#ConcessionaireID').on('change', function (ev) {
+        reloadtable();
+    });
+
+    $('#MealType').on('change', function (ev) {
+        reloadtable();
+    });
+
+
+     function modalShow(v) {
+        var id = parseInt(v) || 0;
+        $('#detailID').val(id);
+
+
+               $.ajax({
+                        url: "@Url.Action("ShowDetails")"
+                            , method: "POST"
+                            , dataType: 'json'
+                            , data: { id: id}
+                            , success: function (responsedata) {
+                                $('#modMealType').val(responsedata.param2).trigger('change');
+
+                                $("#modMealName").append(new Option(responsedata.param1, responsedata.num1));
+                                $('#modMealName').val(responsedata.param1).trigger('change');
+                            }
+                    });
+
+        $('#myModalMeal').modal('show');
+    }
+
+    var sampleArray = [{ id: 0, text: 'enhancement' }, { id: 1, text: 'bug' }
+        , { id: 2, text: 'duplicate' }, { id: 3, text: 'invalid' }
+        , { id: 4, text: 'wontfix' }];
+
+
+    $('#modMealType').on('change', function (ev) {
+        $('#NoServingsLeft').val(0);
+        var options = $('#modMealName');
+        document.getElementById('modMealName').innerHTML = "";
+
+         $.ajax({
+                url: "@Url.Action("GetListMeals")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {
+                    ConcessionaireID: $('#ConcessionaireID').val()
+                    , Date: $('#datepicker').val()
+                    , MealType: $('#modMealType').val()
+                }
+                , success: function (data) {
+                    $.each(data, function () {
+                        options.append($("<option />").val(this.id).text(this.text));
+                    });
+                    options.select2({ theme: 'bootstrap', width: '100%' }).trigger('change');
+                }
+        });
+
+
+
+        //$.each(sampleArray, function () {
+        //    options.append($("<option />").val(this.id).text(this.text));
+        //});
+
+        //reloadMenu();
+    });
+
+
+        $('#modMealName').on('change', function () {
+
+         $.ajax({
+                url: "@Url.Action("GetInventory")"
+                , method: "POST"
+                , dataType: 'json'
+                , data: {
+                    id: $(this).val()
+
+                }
+                , success: function (responsedata) {
+                    $('#NoServingsLeft').val(responsedata.num1);
+                }
+        });
+
+    });
+    function reloadMenu() {
+
+       $('#detailID').val(id);
+        $.ajax({
+            url: "@Url.Action("ShowDetails")"
+            , method: "POST"
+            , dataType: 'json'
+            , data: { id: id }
+            , success: function (responsedata) {
+
+                if (responsedata.status == "success") {
+                    $("#modName").val(responsedata.param1);
+                    $("#modMealType").val(responsedata.param2);
+                    $("#modDescriptions").val(responsedata.param3);
+                    $("#modNoServings").val(responsedata.num1);
+                } else {
+                    swal("Error deleting!", "Please try again", "error");
+                }
+
+            }
+        });
+
+
+
+
+
+
+
+
+        var table = $('#tbl').DataTable({
+        "processing": false,
+        "serverSide": true,
+        "info": true,
+        "lengthMenu": [[10, 50, 100, -1], [10, 50, 100, "All"]],
+        "ajax": {
+            "url": "@Url.Action("getDataMenu", "Order")?noCols=3&headerID=" + $('#headerID').val() + "&ConcessionaireID=" + $('#ConcessionaireID').val()
+                + "&MealType=" + $('#MealType').val() + "&Date=" + $('#datepicker').val(),
+            "type": "POST"
+        },
+        "columns": [
+            {
+                "data": "Name"
+                , "orderable": true
+                , "width": "25%"
+            },
+            {
+                "data": "Descriptions"
+                , "orderable": true
+                , "width": "25%"
+            },
+            {
+                "data": "ServingsLeft"
+                , "orderable": true
+                , "width": "20%"
+            },
+                {
+                    "data": "ID"
+                    , "orderable": true
+                    , "render": function (value) {
+
+                        var $newLinkTarget = '<button style="font-size:12px;" type="button" class="btn btn-default" onclick="javascript:addItemdetail(' + value + ')">Add Item</button>';
+                        return $newLinkTarget;
+                    }, "visible": true
+
+                }
+
+        ],
+        "order": [[0, "asc"]]
+            , "orderCellsTop": true
+    });
+    }
+
+
+
+
+    function reloadtable() {
+
+        $("#tbl").dataTable().fnDestroy();
+
+        var table = $('#tbl').DataTable({
+        "processing": false,
+        "serverSide": true,
+        "info": true,
+        "lengthMenu": [[10, 50, 100, -1], [10, 50, 100, "All"]],
+        "ajax": {
+            "url": "@Url.Action("getDataMenu", "Order")?noCols=3&headerID=" + $('#headerID').val() + "&ConcessionaireID=" + $('#ConcessionaireID').val()
+                + "&MealType=" + $('#MealType').val() + "&Date=" + $('#datepicker').val(),
+            "type": "POST"
+        },
+        "columns": [
+            {
+                "data": "Name"
+                , "orderable": true
+                , "width": "25%"
+            },
+            {
+                "data": "Descriptions"
+                , "orderable": true
+                , "width": "25%"
+            },
+            {
+                "data": "ServingsLeft"
+                , "orderable": true
+                , "width": "20%"
+            },
+                {
+                    "data": "ID"
+                    , "orderable": true
+                    , "render": function (value) {
+
+                        var $newLinkTarget = '<button style="font-size:12px;" type="button" class="btn btn-default" onclick="javascript:addItemdetail(' + value + ')">Add Item</button>';
+                        return $newLinkTarget;
+                    }, "visible": true
+
+                }
+
+        ],
+        "order": [[0, "asc"]]
+            , "orderCellsTop": true
+    });
+    }
+
+
+    $('#btnSearch').click(function () {
+        reloadtable();
+    })
+
+
+    function addItemdetail(id) {
+        $d1 = new Date($('#datepicker').val());
+        $d2 = new Date();
+
+        var millisecondsPerDay = 1000 * 60 * 60 * 24;
+
+        var millisBetween = $d1.getTime() - $d2.getTime();
+        var days = millisBetween / millisecondsPerDay;
+
+
+        $daysAllowed = Math.floor(days + 1)
+
+        if ($daysAllowed < 2) {
+                $.ajax({
+                url: "@Url.Action("GetOverRide")"
+                , method: "POST"
+                , dataType: 'json'
+                , async : "false"
+                , data: {
+                    EmployeeID: $('#EmployeeID').val()
+                    , dt: $('#datepicker').val()
+                }
+                , success: function (responseData) {
+                    if (responseData.status == "success") {
+                        $.post("@Url.Action("AddMealDetail", "Order")"
+                        , {
+                            MealDetailsID: id, Date: $('#datepicker').val(), EmployeeID: $('#EmployeeID').val(), OrderHeaderID: $('#headerID').val(), MealType: $('#MealType').val()
+                            , OrderType: $('#OrderType').val()}
+                            , function (responseData) {
+                                if (responseData.status == "success") {
+                                    swal("Done!", "It was succesfully added!", {
+                                        icon: "success",
+                                        buttons: false,
+                                        timer: 2000
+                                    });
+                                    $('#headerID').val(responseData.num1)
+                                    $('#maintable').find('tbody').append(
+                                        "<tr><td hidden>" + responseData.num2 + "</td><td>" + responseData.param1 + "</td><td>" + responseData.param2 + "</td><td>" + responseData.param4 + "</td><td style='color: darkorange;'>" + responseData.param3 + "</td><td>" +
+                                        "<button class='btn' onclick='deletecartitem(this);'><i class='fa fa-trash' >" + "</td></tr>");
+
+
+
+                                    reloadtable();
+                                } else {
+                                    swal("Error adding!" + responseData.message, "Please try again", "error");
+                                }
+                            });
+
+                    } else {
+                        swal("Error adding!" + responseData.message, "Please try again", "error");
+                    }
+                }
+            });
+        } else {
+             $.post("@Url.Action("AddMealDetail", "Order")"
+            , {
+                MealDetailsID: id, Date: $('#datepicker').val(), EmployeeID: $('#EmployeeID').val(), OrderHeaderID: $('#headerID').val(), MealType: $('#MealType').val()
+                , OrderType: $('#OrderType').val()}
+                , function (responseData) {
+                    if (responseData.status == "success") {
+                        swal("Done!", "It was succesfully added!", {
+                            icon: "success",
+                            buttons: false,
+                            timer: 2000
+                        });
+                        $('#headerID').val(responseData.num1)
+                        $('#maintable').find('tbody').append("<tr><td hidden>" + responseData.num2 + "</td><td>" + responseData.param1 + "</td><td>" + responseData.param2 +  "</td><td>" + responseData.param4 +"</td><td style='color: darkorange;'>" + responseData.param3 + "</td><td>" +
+                            "<button class='btn' onclick='deletecartitem(this);'><i class='fa fa-trash' >" + "</td></tr>");
+
+
+
+                        reloadtable();
+                    } else {
+                        swal("Error adding! " + responseData.message, "Please try again", {
+
+                            buttons: false,
+                            timer: 2000
+                        });
+                    }
+                });
+        }
+
+
+
+
+
+
+    }
+    $('#btnUpdate').click(function () {
+        $noservings = $('#NoServingsLeft').val();
+        if ($noservings < 1) {
+            swal("Error updating! No more servings left" , "Please try again", "error");
+            return;
+        }
+
+        $.post("@Url.Action("UpdateMeal")", {
+            id: $('#detailID').val()
+            , mealid: $('#modMealName').val()
+        }
+                       , function (responseData) {
+                           if (responseData.status == "success") {
+
+                               $("#alertbox")[0].style.display = "block";
+                               $noservings = $noservings - 1
+                               $('#NoServingsLeft').val($noservings) ;
+                           } else {
+                               swal("Error updating!" + responseData.message, "Please try again", "error");
+
+                           }
+                       });
+    })
+
+
+
+    function deletecartitem(v) {
+
+
+
+                $id = $(v).closest('tr').find('td:first').text();
+
+
+
+            swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.post("@Url.Action("DeleteDetails", "Order")", { id: $id}
+                       , function (responseData) {
+                           if (responseData.status == "success") {
+                               swal("Done!", "It was succesfully deleted!", {
+                                   icon: "success",
+                                   buttons: false,
+                                   timer: 2000
+                               });
+                               $(v).closest('tr').remove();
+                           } else {
+                               swal("Error deleting!" + responseData.message, "Please try again", "error");
+
+                           }
+                       });
+            } else {
+
+                swal("Transaction cancelled!", {
+                    icon: "info",
+                    buttons: false,
+                    timer: 1000
+                });
+            }
+            });
+
+
+
+
+
+
+    }
+</script>
